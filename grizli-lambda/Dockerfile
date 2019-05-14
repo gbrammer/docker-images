@@ -3,6 +3,12 @@ FROM amazonlinux:2017.09
 #  docker build . -t gbrammer/grizli-lambda-test:latest
 #  docker run --rm -it gbrammer/grizli-lambda-test:latest /bin/bash
 
+#  ## Run with working directory
+#  docker run -v $(pwd):/workdir -i -t gbrammer/grizli-lambda-test /bin/bash
+#  (in the environment)  
+#  export VIRTUAL_ENV=/venv; source ${VIRTUAL_ENV}/bin/activate; cd /workdir
+#
+
 #  ## Build the full venv.zip file and copy to AWS
 #  cd /tmp/ ; docker run -v $(pwd):/workdir -i -t gbrammer/grizli-lambda-test /bin/bash -c "cp /tmp/venv.zip /workdir/"; cd - ; aws s3 cp /tmp/venv.zip s3://aws-grivam/tmp/venv.zip
 
@@ -64,6 +70,7 @@ RUN source ${VIRTUAL_ENV}/bin/activate && \
 
 ADD ./Install/matplotlibrc /root/.config/matplotlib/matplotlibrc
 ADD ./Install/matplotlibrc ${VIRTUAL_ENV}/
+ADD ./Install/matplotlibrc /venv/lib64/python3.6/site-packages/matplotlib/mpl-data/matplotlibrc
 
 ####
 # Install grizli
@@ -72,7 +79,8 @@ RUN cd /tmp/ && \
     source ${VIRTUAL_ENV}/bin/activate && \
     git clone https://github.com/gbrammer/grizli.git && \
     cd grizli && \
-    python setup.py install && \
+    #python setup.py install && \
+    pip install . && \
     cd ../ && \
     rm -rf grizli
     

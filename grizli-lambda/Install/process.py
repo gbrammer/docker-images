@@ -47,6 +47,8 @@ def run_grizli_fit(event):
         else:
             event_bools[k] = False
     
+    print('Grizli version: ', grizli.__version__)
+    
     ## Output path
     if 'output_path' in event:
         output_path = event['output_path']
@@ -100,8 +102,11 @@ def run_grizli_fit(event):
     if 'zr' in event:
         zr = list(np.cast[float](event['zr']))
     else:
-        zr = np.load('fit_args.npy')[0]['zr']
-     
+        try:
+            zr = np.load('fit_args.npy')[0]['zr']
+        except:
+            zr = np.load('fit_args.npy', allow_pickle=True)[0]['zr']
+            
     ###   
     ### Run the fit
     
@@ -149,5 +154,17 @@ def handler(event, context):
     print(event) #['s3_object_path'], event['verbose'])
     run_grizli_fit(event)
 
+def show_version(event, context):
+    import grizli
+    import eazy
+    
+    print('Event: ', event)
+    
+    print('grizli version: ', grizli.__version__)
+    print('eazy version: ', eazy.__version__)
+    
+    import matplotlib
+    print('matplotlibrc: ', matplotlib.matplotlib_fname())
+    
 if __name__ == "__main__":
     handler('', '')
