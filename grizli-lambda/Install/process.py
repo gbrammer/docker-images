@@ -43,7 +43,7 @@ def run_grizli_fit(event):
     event_bools = {}
     for k in ['verbose', 'check_wcs', 'quasar_fit', 'use_psf', 'skip_started']:
         if k in event:
-            event_bools[k] = event[k] in ["True", True]
+            event_bools[k] = event[k].lower() in ["true", True]
         else:
             event_bools[k] = False
     
@@ -139,8 +139,9 @@ def run_grizli_fit(event):
     files = glob.glob('{0}_{1:05d}*'.format(root, id))
     for file in files:
         if 'beams.fits' not in file:
-            print(file)
-            bkt.upload_file(file, '{0}/{1}'.format(output_path, file), ExtraArgs={'ACL': 'public-read'})
+            aws_file = '{0}/{1}'.format(output_path, file)
+            print(aws_file)
+            bkt.upload_file(file, aws_file, ExtraArgs={'ACL': 'public-read'})
     
     # Remove start log now that done
     res = bkt.delete_objects(Delete={'Objects':[{'Key':full_start}]})
