@@ -52,6 +52,7 @@ RUN source ${VIRTUAL_ENV}/bin/activate && \
     pip install scipy && \
     pip install matplotlib && \
     pip install astropy && \
+    pip install pyyaml && \
     pip install drizzlepac && \
     pip install peakutils && \
     pip install extinction && \
@@ -71,6 +72,8 @@ RUN source ${VIRTUAL_ENV}/bin/activate && \
 ADD ./Install/matplotlibrc /root/.config/matplotlib/matplotlibrc
 ADD ./Install/matplotlibrc ${VIRTUAL_ENV}/
 ADD ./Install/matplotlibrc /venv/lib64/python3.6/site-packages/matplotlib/mpl-data/matplotlibrc
+
+# RUN pwd # Force rebuild from here
 
 ####
 # Install grizli
