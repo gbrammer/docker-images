@@ -18,6 +18,8 @@ FROM amazonlinux:2017.09
 ## Linux tools
 ##
 
+# RUN pwd # Force rebuild from here
+
 RUN yum update -y && \
     yum install -y atlas-devel \
                    atlas-sse3-devel \
@@ -43,7 +45,9 @@ RUN /usr/bin/virtualenv-3.6 \
 
 ### For cc1plus compiler
 ENV PATH "${PATH}:/usr/libexec/gcc/x86_64-amazon-linux/4.8.5/"
-   
+ 
+# RUN pwd # Force rebuild from here
+  
 ### Install minimal Python tools
 RUN source ${VIRTUAL_ENV}/bin/activate && \
     pip install --upgrade setuptools && \
@@ -59,10 +63,16 @@ RUN source ${VIRTUAL_ENV}/bin/activate && \
     pip install descartes && \
     pip install shapely
 
-### Lightweight fork for low-level drizzle functions (AstroDrizzle won't work)
+# RUN pwd # Force rebuild from here
+
+### Additional dependencies
 # RUN source ${VIRTUAL_ENV}/bin/activate && \
-#     pip install git+https://github.com/gbrammer/drizzlepac.git
+#     pip install git+https://github.com/gbrammer/tristars.git
     
+# RUN source ${VIRTUAL_ENV}/bin/activate && \
+#     pip install cython && \
+#     pip install git+https://github.com/kbarbary/sep.git
+        
 ##### Special matplotlibrc file
 
 # Initialize matplotib directory
@@ -73,7 +83,7 @@ ADD ./Install/matplotlibrc /root/.config/matplotlib/matplotlibrc
 ADD ./Install/matplotlibrc ${VIRTUAL_ENV}/
 ADD ./Install/matplotlibrc /venv/lib64/python3.6/site-packages/matplotlib/mpl-data/matplotlibrc
 
-# RUN pwd # Force rebuild from here
+RUN date # Force rebuild from here
 
 ####
 # Install grizli
@@ -83,6 +93,7 @@ RUN cd /tmp/ && \
     git clone https://github.com/gbrammer/grizli.git && \
     cd grizli && \
     #python setup.py install && \
+    # rm grizli/data/templates/stars/bt-settl_t400-3500_z0.0.fits && \
     pip install . && \
     cd ../ && \
     rm -rf grizli
@@ -121,7 +132,7 @@ RUN cd /tmp/ && \
 ### Problem with paths
 RUN mv /venv/lib/python3.6/site-packages/stsci/skypac /venv/lib64/python3.6/site-packages/stsci/ && \
     mv /venv/lib/python3.6/site-packages/stsci/tools /venv/lib64/python3.6/site-packages/stsci/
-    
+   
 ############
 ## Final stripped and zipped virtual environment
 ADD ./Install/process.py ${VIRTUAL_ENV}/
