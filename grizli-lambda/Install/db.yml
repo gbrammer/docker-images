@@ -1,0 +1,5 @@
+hostname: grizdbinstance.c3prl6czsxrm.us-east-1.rds.amazonaws.com
+username: ''
+password: ''
+database: grizlifields
+port: 5432
