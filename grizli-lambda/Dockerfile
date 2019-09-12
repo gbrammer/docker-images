@@ -10,7 +10,7 @@ FROM amazonlinux:2017.09
 #
 
 #  ## Build the full venv.zip file and copy to AWS
-#  cd /tmp/ ; docker run -v $(pwd):/workdir -i -t gbrammer/grizli-lambda-test /bin/bash -c "cp /tmp/venv.zip /workdir/"; cd - ; aws s3 cp /tmp/venv.zip s3://aws-grivam/tmp/venv.zip
+#  cd /tmp/ ; docker run -v $(pwd):/workdir -i -t gbrammer/grizli-lambda-test /bin/bash -c "cp /tmp/venv.zip /workdir/"; cd - ; aws s3 cp /tmp/venv.zip s3://aws-grivam/tmp/venv.zip --acl public-read
 
 #ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
@@ -61,8 +61,9 @@ RUN source ${VIRTUAL_ENV}/bin/activate && \
     pip install peakutils && \
     pip install extinction && \
     pip install descartes && \
-    pip install shapely
-
+    pip install shapely && \
+    pip install pyregion 
+    
 # RUN pwd # Force rebuild from here
 
 ### Additional dependencies
@@ -84,6 +85,7 @@ ADD ./Install/matplotlibrc ${VIRTUAL_ENV}/
 ADD ./Install/matplotlibrc /venv/lib64/python3.6/site-packages/matplotlib/mpl-data/matplotlibrc
 
 RUN date # Force rebuild from here
+RUN echo "2019-09-12e" # Force rebuild from here
 
 ####
 # Install grizli
@@ -129,6 +131,16 @@ RUN cd /tmp/ && \
     cd ../ && \
     rm -rf prospector
 
+### SQL tools
+RUN source ${VIRTUAL_ENV}/bin/activate && \
+    pip install setuptools && \
+    pip install pandas && \
+    pip install sqlalchemy && \
+    cd /tmp/ && \
+    git clone https://github.com/jkehler/awslambda-psycopg2.git && \
+    mkdir /venv/lib/python3.6/site-packages/psycopg2 && \
+    cp awslambda-psycopg2/psycopg2-3.6/* /venv/lib/python3.6/site-packages/psycopg2/
+    
 ### Problem with paths
 RUN mv /venv/lib/python3.6/site-packages/stsci/skypac /venv/lib64/python3.6/site-packages/stsci/ && \
     mv /venv/lib/python3.6/site-packages/stsci/tools /venv/lib64/python3.6/site-packages/stsci/
@@ -137,6 +149,8 @@ RUN mv /venv/lib/python3.6/site-packages/stsci/skypac /venv/lib64/python3.6/site
 ## Final stripped and zipped virtual environment
 ADD ./Install/process.py ${VIRTUAL_ENV}/
 ADD ./Install/aws_drizzler.py ${VIRTUAL_ENV}/
+
+ADD ./Install/db.yml ${VIRTUAL_ENV}/lib64/python3.6/site-packages/grizli/data/
 
 ADD ./Install/package_venv.sh /tmp/
 RUN source ${VIRTUAL_ENV}/bin/activate && \
