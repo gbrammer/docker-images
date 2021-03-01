@@ -1,1 +1,1 @@
-Environment for running eazy-py on deepnote
+Environment for running eazy-py on deepnote.
