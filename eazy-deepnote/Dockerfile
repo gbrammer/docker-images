@@ -5,7 +5,7 @@ FROM deepnote/python:3.7
 RUN pip install plotly h5py matplotlib numpy scipy pandas astropy boto3
 RUN pip install pyaml sep stwcs
 RUN pip install peakutils shapely pyregion 
-RUN pi pinstall drizzlepac
+RUN pip install drizzlepac
 # RUN pip install pandeia.engine jwst
 
 RUN pip install git+https://github.com/gbrammer/astroquery.git
